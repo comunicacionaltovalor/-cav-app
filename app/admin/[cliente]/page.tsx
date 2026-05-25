@@ -20,6 +20,8 @@ export default function AdminCliente() {
   const [students,  setStudents]  = useState<Student[]>([]);
   const [responses, setResponses] = useState<any[]>([]);
   const [saving,    setSaving]    = useState(false);
+  const [editing,   setEditing]   = useState<Mission | null>(null);
+  const [savingEdit,setSavingEdit] = useState(false);
 
   const [mission, setMission] = useState({
     day_number:   1,
@@ -91,6 +93,28 @@ export default function AdminCliente() {
     if (ins.error) { alert(ins.error.message); return; }
     await loadData(cliente.id);
     setStudent({ name: '', email: '', phone: '', group_name: 'Grupo 1' });
+  }
+
+  async function updateMission() {
+    if (!editing || !cliente) return;
+    setSavingEdit(true);
+    const slug = slugify(editing.title);
+    const { error } = await supabase
+      .from('misiones')
+      .update({
+        day_number:   editing.day_number,
+        title:        editing.title,
+        slug,
+        publish_date: editing.publish_date,
+        tip:          editing.tip,
+        question:     editing.question,
+        open_field:   editing.open_field,
+      })
+      .eq('id', editing.id);
+    if (error) { alert(error.message); setSavingEdit(false); return; }
+    await loadData(cliente.id);
+    setSavingEdit(false);
+    setEditing(null);
   }
 
   function exportCsv() {
@@ -279,6 +303,11 @@ export default function AdminCliente() {
                             target="_blank" rel="noreferrer">
                             WhatsApp
                           </a>
+                          <button
+                            className="btn secondary"
+                            onClick={() => setEditing(m)}>
+                            Editar
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -286,6 +315,51 @@ export default function AdminCliente() {
                   })}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* ── FORMULARIO DE EDICIÓN ── */}
+        {editing && (
+          <div className="card" style={{ borderColor: 'var(--oro)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h2 className="headline" style={{ fontSize: 15 }}>Editando — Día {editing.day_number}</h2>
+              <button className="btn secondary" style={{ padding: '5px 12px', fontSize: 10 }} onClick={() => setEditing(null)}>
+                Cancelar
+              </button>
+            </div>
+
+            <Field label="Día">
+              <input type="number" min={1} value={editing.day_number}
+                onChange={e => setEditing({ ...editing, day_number: +e.target.value })} />
+            </Field>
+            <Field label="Fecha de publicación">
+              <input type="date" value={editing.publish_date}
+                onChange={e => setEditing({ ...editing, publish_date: e.target.value })} />
+            </Field>
+            <Field label="Título">
+              <input value={editing.title}
+                onChange={e => setEditing({ ...editing, title: e.target.value })} />
+            </Field>
+            <Field label="Tip del día">
+              <textarea value={editing.tip}
+                onChange={e => setEditing({ ...editing, tip: e.target.value })} />
+            </Field>
+            <Field label="Pregunta de observación">
+              <input value={editing.question}
+                onChange={e => setEditing({ ...editing, question: e.target.value })} />
+            </Field>
+
+            <label className="check" style={{ marginTop: 6, marginBottom: 4 }}>
+              <input type="checkbox" checked={editing.open_field}
+                onChange={e => setEditing({ ...editing, open_field: e.target.checked })} />
+              <span>Incluir campo de respuesta libre</span>
+            </label>
+
+            <div className="nav">
+              <button onClick={updateMission} disabled={savingEdit || !editing.title.trim()}>
+                {savingEdit ? 'Guardando…' : 'Guardar cambios'}
+              </button>
             </div>
           </div>
         )}
