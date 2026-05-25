@@ -117,7 +117,8 @@ label {
   font-weight: 500;
 }
 
-input, textarea, select {
+input:not([type="checkbox"]):not([type="radio"]),
+textarea, select {
   width: 100%;
   padding: 11px 13px;
   border: 1px solid rgba(27, 42, 74, .18);
@@ -195,15 +196,18 @@ button:disabled:hover { background: var(--azul); color: var(--blanco); }
 .check:last-of-type { border-bottom: none; }
 
 .check input[type="checkbox"] {
-  width: 17px;
-  height: 17px;
-  min-width: 17px;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
   flex-shrink: 0;
-  margin-top: 3px;
+  margin-top: 2px;
   cursor: pointer;
   accent-color: var(--azul);
   padding: 0;
   background: #fff;
+  -webkit-appearance: checkbox;
+  appearance: auto;
+  border: none;
 }
 
 /* --- TABLAS --- */
@@ -328,4 +332,17 @@ tr:hover td { background: rgba(27, 42, 74, .022); }
   .stat-value { font-size: 24px; }
 
   .stats { grid-template-columns: repeat(3, 1fr); }
+
+  .check {
+    padding: 16px 0;
+    gap: 16px;
+    min-height: 48px;
+    align-items: center;
+  }
+
+  .check input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+  }
 }
