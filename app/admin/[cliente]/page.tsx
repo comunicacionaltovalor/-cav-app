@@ -248,7 +248,12 @@ export default function AdminCliente() {
                   <tr><th>Día</th><th>Título</th><th>Ejercicio</th><th>Fecha</th><th></th></tr>
                 </thead>
                 <tbody>
-                  {missions.map(m => (
+                  {missions.map(m => {
+                    const mLink = `${siteUrl}/mision/${clienteSlug}/${m.slug}`;
+                    const mWa   = encodeURIComponent(
+                      `🎯 Comunicación Alto Valor — ${cliente.name}\n\nTu misión de hoy está lista.\n\n📅 Día ${m.day_number} · ${m.title}\n\n🔗 ${mLink}`
+                    );
+                    return (
                     <tr key={m.id}>
                       <td style={{ color: 'var(--oro)', fontFamily: 'Georgia', whiteSpace: 'nowrap' }}>{m.day_number}</td>
                       <td style={{ whiteSpace: 'nowrap' }}>
@@ -264,15 +269,21 @@ export default function AdminCliente() {
                       </td>
                       <td className="muted small" style={{ whiteSpace: 'nowrap' }}>{m.publish_date}</td>
                       <td>
-                        <button
-                          onClick={() => navigator.clipboard.writeText(
-                            `${siteUrl}/mision/${clienteSlug}/${m.slug}`
-                          )}>
-                          Copiar
-                        </button>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                          <button
+                            onClick={() => navigator.clipboard.writeText(mLink)}>
+                            Copiar
+                          </button>
+                          <a className="btn secondary"
+                            href={`https://wa.me/?text=${mWa}`}
+                            target="_blank" rel="noreferrer">
+                            WhatsApp
+                          </a>
+                        </div>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
