@@ -127,7 +127,7 @@ export default function AdminCliente() {
   const dailyLink = active ? `${siteUrl}/mision/${clienteSlug}/${active.slug}` : '';
   const waMsg     = active
     ? encodeURIComponent(
-        `\u{1F3AF} Comunicación Alto Valor — ${cliente.name}\n\nTu misión de hoy está lista.\n\n\u{1F4C5} Día ${active.day_number} · ${active.title}\n\n\u{1F517} ${dailyLink}`
+        `Comunicación Alto Valor — ${cliente.name}\n\nTu misión de hoy está lista.\n\nDía ${active.day_number} · ${active.title}\n\n${dailyLink}`
       )
     : '';
 
