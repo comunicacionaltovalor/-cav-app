@@ -127,7 +127,7 @@ export default function AdminCliente() {
   const dailyLink = active ? `${siteUrl}/mision/${clienteSlug}/${active.slug}` : '';
   const waMsg     = active
     ? encodeURIComponent(
-        `🎯 Comunicación Alto Valor — ${cliente.name}\n\nTu misión de hoy está lista.\n\n📅 Día ${active.day_number} · ${active.title}\n\n🔗 ${dailyLink}`
+        `\u{1F3AF} Comunicación Alto Valor — ${cliente.name}\n\nTu misión de hoy está lista.\n\n\u{1F4C5} Día ${active.day_number} · ${active.title}\n\n\u{1F517} ${dailyLink}`
       )
     : '';
 
@@ -251,7 +251,7 @@ export default function AdminCliente() {
                   {missions.map(m => {
                     const mLink = `${siteUrl}/mision/${clienteSlug}/${m.slug}`;
                     const mWa   = encodeURIComponent(
-                      `🎯 Comunicación Alto Valor — ${cliente.name}\n\nTu misión de hoy está lista.\n\n📅 Día ${m.day_number} · ${m.title}\n\n🔗 ${mLink}`
+                      `\u{1F3AF} Comunicación Alto Valor — ${cliente.name}\n\nTu misión de hoy está lista.\n\n\u{1F4C5} Día ${m.day_number} · ${m.title}\n\n\u{1F517} ${mLink}`
                     );
                     return (
                     <tr key={m.id}>
