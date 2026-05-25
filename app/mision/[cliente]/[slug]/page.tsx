@@ -22,6 +22,7 @@ function MissionContent() {
   const [student,   setStudent]   = useState<any>(null);
   const [selected,  setSelected]  = useState<string[]>([]);
   const [answer,    setAnswer]    = useState('');
+  const [name,      setName]      = useState('');
   const [done,      setDone]      = useState(false);
   const [duplicate, setDuplicate] = useState(false);
   const [notFound,  setNotFound]  = useState(false);
@@ -102,7 +103,7 @@ function MissionContent() {
     setSending(true);
     const r = await supabase
       .from('respuestas')
-      .insert({ mission_id: mission.id, student_id: student?.id || null, open_answer: answer })
+      .insert({ mission_id: mission.id, student_id: student?.id || null, open_answer: answer, respondent_name: name.trim() || null })
       .select()
       .single();
     if (r.error) { alert(r.error.message); setSending(false); return; }
@@ -187,6 +188,24 @@ function MissionContent() {
         {/* Bloque de respuesta */}
         <div className="card">
           <h2 className="headline" style={{ fontSize: 14, marginBottom: 14 }}>Observación</h2>
+
+          {!student && (
+            <div style={{ marginBottom: 24 }}>
+              <p className="small" style={{
+                marginBottom: 8, letterSpacing: '.12em',
+                textTransform: 'uppercase', fontSize: 10.5, opacity: .72,
+                fontFamily: "'Gill Sans MT','Trebuchet MS',sans-serif",
+              }}>
+                Nombre y apellido
+              </p>
+              <input
+                placeholder="Tu nombre completo"
+                value={name}
+                onChange={e => setName(e.target.value)}
+              />
+            </div>
+          )}
+
           <p style={{ marginBottom: 22, lineHeight: 1.72, fontSize: 16 }}>{mission.question}</p>
 
           {options.map(o => (
