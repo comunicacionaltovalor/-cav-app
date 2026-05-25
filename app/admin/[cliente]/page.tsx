@@ -251,7 +251,7 @@ export default function AdminCliente() {
                   {missions.map(m => {
                     const mLink = `${siteUrl}/mision/${clienteSlug}/${m.slug}`;
                     const mWa   = encodeURIComponent(
-                      `\u{1F3AF} Comunicación Alto Valor — ${cliente.name}\n\nTu misión de hoy está lista.\n\n\u{1F4C5} Día ${m.day_number} · ${m.title}\n\n\u{1F517} ${mLink}`
+                      `Comunicación Alto Valor — ${cliente.name}\n\nTu misión de hoy está lista.\n\nDía ${m.day_number} · ${m.title}\n\n${mLink}`
                     );
                     return (
                     <tr key={m.id}>
