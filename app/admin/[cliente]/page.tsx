@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Header from '@/components/Header';
 import { Field } from '@/components/Input';
@@ -22,6 +22,7 @@ export default function AdminCliente() {
   const [saving,    setSaving]    = useState(false);
   const [editing,   setEditing]   = useState<Mission | null>(null);
   const [savingEdit,setSavingEdit] = useState(false);
+  const editRef = useRef<HTMLDivElement>(null);
 
   const [mission, setMission] = useState({
     day_number:   1,
@@ -38,6 +39,9 @@ export default function AdminCliente() {
   });
 
   useEffect(() => { init(); }, [clienteSlug]);
+  useEffect(() => {
+    if (editing) editRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [editing]);
 
   async function init() {
     const c = await supabase
@@ -321,7 +325,7 @@ export default function AdminCliente() {
 
         {/* ── FORMULARIO DE EDICIÓN ── */}
         {editing && (
-          <div className="card" style={{ borderColor: 'var(--oro)' }}>
+          <div ref={editRef} className="card" style={{ borderColor: 'var(--oro)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 className="headline" style={{ fontSize: 15 }}>Editando — Día {editing.day_number}</h2>
               <button className="btn secondary" style={{ padding: '5px 12px', fontSize: 10 }} onClick={() => setEditing(null)}>
