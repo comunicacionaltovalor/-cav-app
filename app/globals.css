@@ -1,0 +1,331 @@
+/* ============================================================
+   COMUNICACIÓN ALTO VALOR
+   Sistema operativo de presencia ejecutiva
+   ============================================================ */
+
+:root {
+  --azul:    #1B2A4A;
+  --oro:     #B8963E;
+  --marfil:  #D4C5A9;
+  --carbon:  #1A1A1A;
+  --blanco:  #F4F1EC;
+
+  --azul-medio: #243558;
+  --oro-velo:   rgba(184, 150, 62, 0.14);
+  --borde:      rgba(184, 150, 62, 0.24);
+  --borde-sutil:rgba(27, 42, 74, 0.12);
+
+  --sombra: 0 1px 3px rgba(27,42,74,.06), 0 8px 28px rgba(27,42,74,.09);
+}
+
+/* --- RESET --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+/* --- BASE --- */
+body {
+  background: var(--blanco);
+  color: var(--carbon);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- TIPOGRAFÍA SANS --- */
+.brand, .headline, .section-label, .stat-label, .sans,
+button, label, th, h1, h2, h3, h4,
+input, select, textarea {
+  font-family: 'Gill Sans MT', 'Gill Sans', 'Trebuchet MS', 'Calibri', sans-serif;
+}
+
+.brand {
+  font-size: 11px;
+  letter-spacing: .44em;
+  text-transform: uppercase;
+  color: var(--oro);
+  font-weight: 500;
+}
+
+h1, h2, h3, h4 { font-weight: 400; }
+
+.headline {
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--azul);
+  line-height: 1.2;
+}
+
+/* --- COLORES DE UTILIDAD --- */
+.gold   { color: var(--oro); }
+.muted  { opacity: .66; }
+.small  { font-size: 13px; }
+.danger { color: #7A1E1E; }
+
+/* --- LAYOUT --- */
+.page  { min-height: 100vh; padding: 32px 20px; }
+.shell { max-width: 1020px; margin: 0 auto; }
+
+/* --- CARDS --- */
+.card {
+  background: rgba(244, 241, 236, .97);
+  border: 1px solid var(--borde);
+  padding: 28px 32px;
+  margin: 20px 0;
+  box-shadow: var(--sombra);
+}
+
+/* Variante oscura — azul marino */
+.dark {
+  background: var(--azul) !important;
+  color: var(--blanco) !important;
+  border-color: rgba(184, 150, 62, .3) !important;
+}
+.dark .headline { color: var(--blanco); }
+.dark label     { color: var(--marfil) !important; opacity: .85 !important; }
+.dark .muted    { color: var(--marfil); opacity: .60; }
+
+/* Variante éxito */
+.success {
+  background: rgba(212, 197, 169, .22) !important;
+  border-color: rgba(184, 150, 62, .4) !important;
+}
+
+/* --- GRID --- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* --- FORMULARIOS --- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 14px 0;
+}
+
+label {
+  font-size: 10.5px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--azul);
+  opacity: .82;
+  font-weight: 500;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid rgba(27, 42, 74, .18);
+  background: rgba(255, 255, 255, .9);
+  color: var(--carbon);
+  font-size: 15px;
+  font-family: Georgia, serif;
+  outline: none;
+  border-radius: 0;
+  -webkit-appearance: none;
+  transition: border-color .2s, background .2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--oro);
+  background: #fff;
+}
+
+input[type="date"] { font-family: 'Gill Sans MT', 'Trebuchet MS', sans-serif; }
+textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
+
+/* --- BOTONES --- */
+button, .btn {
+  border: 1px solid var(--oro);
+  background: var(--azul);
+  color: var(--blanco);
+  padding: 11px 22px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background .22s, color .22s, opacity .15s;
+  font-family: 'Gill Sans MT', 'Gill Sans', 'Trebuchet MS', sans-serif;
+  border-radius: 0;
+  white-space: nowrap;
+}
+
+button:hover, .btn:hover { background: var(--oro); color: var(--azul); }
+button:active, .btn:active { opacity: .84; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+button:disabled:hover { background: var(--azul); color: var(--blanco); }
+
+.btn.secondary {
+  background: transparent;
+  color: var(--azul);
+  border-color: rgba(27, 42, 74, .35);
+}
+.btn.secondary:hover { background: var(--azul); color: var(--blanco); }
+
+.dark .btn.secondary {
+  color: var(--blanco);
+  border-color: rgba(212, 197, 169, .38);
+}
+.dark .btn.secondary:hover {
+  background: rgba(212, 197, 169, .14);
+  color: var(--marfil);
+}
+
+/* --- CHECKBOXES --- */
+.check {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--borde-sutil);
+  cursor: pointer;
+  transition: background .12s;
+}
+.check:last-of-type { border-bottom: none; }
+
+.check input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  min-width: 17px;
+  flex-shrink: 0;
+  margin-top: 3px;
+  cursor: pointer;
+  accent-color: var(--azul);
+  padding: 0;
+  background: #fff;
+}
+
+/* --- TABLAS --- */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+
+th {
+  text-align: left;
+  padding: 10px 14px 12px;
+  font-size: 10px;
+  letter-spacing: .20em;
+  text-transform: uppercase;
+  color: var(--oro);
+  border-bottom: 1px solid rgba(184, 150, 62, .22);
+  font-weight: 500;
+}
+
+td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(27, 42, 74, .06);
+  vertical-align: top;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(27, 42, 74, .022); }
+
+/* --- NAV / ACCIONES --- */
+.nav {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 20px 0;
+}
+
+/* --- SEPARADORES --- */
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, rgba(184,150,62,.45) 0%, transparent 78%);
+  margin: 36px 0;
+}
+
+/* --- ETIQUETAS DE SECCIÓN --- */
+.section-label {
+  font-size: 10px;
+  letter-spacing: .48em;
+  text-transform: uppercase;
+  color: var(--oro);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+/* --- BARRA DE ESTADÍSTICAS --- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--borde);
+  border: 1px solid var(--borde);
+  margin: 24px 0;
+}
+
+.stat {
+  background: rgba(244, 241, 236, .97);
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 30px;
+  font-family: Georgia, serif;
+  color: var(--azul);
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 9.5px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--oro);
+  font-weight: 500;
+}
+
+/* --- BLOQUE DE TIP (página de misión) --- */
+.tip-block {
+  border-left: 2px solid var(--oro);
+  padding: 2px 0 2px 20px;
+  margin: 22px 0 4px;
+}
+
+.tip-text {
+  font-size: 18px;
+  line-height: 1.7;
+  font-style: italic;
+  color: rgba(244, 241, 236, .90);
+  font-family: Georgia, serif;
+}
+
+/* ============================================================
+   RESPONSIVE — Mobile first
+   ============================================================ */
+@media (max-width: 640px) {
+  .page  { padding: 20px 15px; }
+  .card  { padding: 20px 18px; }
+
+  h1.headline { font-size: 24px; letter-spacing: .09em; }
+  h2.headline { font-size: 16px; }
+  .headline   { letter-spacing: .10em; }
+  .brand      { letter-spacing: .28em; }
+
+  .grid { grid-template-columns: 1fr; }
+
+  th   { padding: 9px 10px 11px; font-size: 9.5px; }
+  td   { padding: 10px 10px; }
+  table { font-size: 13px; }
+
+  button, .btn { padding: 11px 16px; font-size: 10.5px; }
+  .nav { gap: 8px; }
+
+  .tip-text   { font-size: 16px; }
+  .stat-value { font-size: 24px; }
+
+  .stats { grid-template-columns: repeat(3, 1fr); }
+}
