@@ -20,8 +20,9 @@ export default function AdminCliente() {
   const [students,  setStudents]  = useState<Student[]>([]);
   const [responses, setResponses] = useState<any[]>([]);
   const [saving,    setSaving]    = useState(false);
-  const [editing,   setEditing]   = useState<Mission | null>(null);
-  const [savingEdit,setSavingEdit] = useState(false);
+  const [editing,     setEditing]     = useState<Mission | null>(null);
+  const [editOptions, setEditOptions] = useState('');
+  const [savingEdit,  setSavingEdit]  = useState(false);
   const editRef = useRef<HTMLDivElement>(null);
 
   const [mission, setMission] = useState({
@@ -99,6 +100,16 @@ export default function AdminCliente() {
     setStudent({ name: '', email: '', phone: '', group_name: 'Grupo 1' });
   }
 
+  async function startEditing(m: Mission) {
+    const o = await supabase
+      .from('opciones_mision')
+      .select('label')
+      .eq('mission_id', m.id)
+      .order('position');
+    setEditOptions((o.data || []).map(x => x.label).join('\n'));
+    setEditing(m);
+  }
+
   async function updateMission() {
     if (!editing || !cliente) return;
     setSavingEdit(true);
@@ -116,6 +127,11 @@ export default function AdminCliente() {
       })
       .eq('id', editing.id);
     if (error) { alert(error.message); setSavingEdit(false); return; }
+    // Reemplazar opciones
+    await supabase.from('opciones_mision').delete().eq('mission_id', editing.id);
+    const opts = editOptions.split('\n').filter(Boolean)
+      .map((label, i) => ({ mission_id: editing.id, label, position: i + 1 }));
+    if (opts.length) await supabase.from('opciones_mision').insert(opts);
     await loadData(cliente.id);
     setSavingEdit(false);
     setEditing(null);
@@ -309,7 +325,7 @@ export default function AdminCliente() {
                           </a>
                           <button
                             className="btn secondary"
-                            onClick={() => setEditing(m)}>
+                            onClick={() => startEditing(m)}>
                             Editar
                           </button>
                         </div>
@@ -352,6 +368,10 @@ export default function AdminCliente() {
             <Field label="Pregunta de observación">
               <input value={editing.question}
                 onChange={e => setEditing({ ...editing, question: e.target.value })} />
+            </Field>
+            <Field label="Opciones de respuesta — una por línea">
+              <textarea value={editOptions} style={{ minHeight: 100 }}
+                onChange={e => setEditOptions(e.target.value)} />
             </Field>
 
             <label className="check" style={{ marginTop: 6, marginBottom: 4 }}>
