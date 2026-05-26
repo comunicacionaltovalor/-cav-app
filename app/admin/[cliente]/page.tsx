@@ -468,32 +468,39 @@ export default function AdminCliente() {
         </div>
 
         {/* ── RANKING ── */}
-        {students.length > 1 && (
-          <div className="card" style={{ marginTop: 0 }}>
-            <h2 className="headline" style={{ fontSize: 14, marginBottom: 18 }}>Ranking del grupo</h2>
-            <table>
-              <thead>
-                <tr><th>#</th><th>Alumno</th><th>Grupo</th><th>Misiones</th></tr>
-              </thead>
-              <tbody>
-                {[...students]
-                  .sort((a, b) => (respCounts[b.id] || 0) - (respCounts[a.id] || 0))
-                  .map((s, i) => (
-                    <tr key={s.id}>
+        {(() => {
+          // Contar misiones por nombre de alumno desde respuestas reales
+          const countMap: Record<string, { nombre: string; grupo: string; total: number }> = {};
+          responses.forEach(r => {
+            const key = r.alumno || 'Anónimo';
+            if (!countMap[key]) countMap[key] = { nombre: key, grupo: r.grupo || '—', total: 0 };
+            countMap[key].total++;
+          });
+          const ranking = Object.values(countMap).sort((a, b) => b.total - a.total);
+          if (ranking.length < 2) return null;
+          return (
+            <div className="card" style={{ marginTop: 0 }}>
+              <h2 className="headline" style={{ fontSize: 14, marginBottom: 18 }}>Ranking</h2>
+              <table>
+                <thead>
+                  <tr><th>#</th><th>Alumno</th><th>Grupo</th><th>Misiones</th></tr>
+                </thead>
+                <tbody>
+                  {ranking.map((s, i) => (
+                    <tr key={s.nombre}>
                       <td style={{ color: 'var(--oro)', fontFamily: 'Georgia', whiteSpace: 'nowrap' }}>
                         {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
                       </td>
-                      <td>{s.name}</td>
-                      <td className="muted small">{s.group_name}</td>
-                      <td style={{ fontFamily: 'Georgia', color: 'var(--azul)' }}>
-                        {respCounts[s.id] || 0}
-                      </td>
+                      <td>{s.nombre}</td>
+                      <td className="muted small">{s.grupo}</td>
+                      <td style={{ fontFamily: 'Georgia', color: 'var(--azul)' }}>{s.total}</td>
                     </tr>
                   ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                </tbody>
+              </table>
+            </div>
+          );
+        })()}
 
         <div className="divider" />
 
