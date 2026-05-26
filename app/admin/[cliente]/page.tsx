@@ -137,6 +137,13 @@ export default function AdminCliente() {
     setEditing(null);
   }
 
+  async function deleteResponse(id: string) {
+    if (!confirm('¿Eliminar esta observación?')) return;
+    await supabase.from('respuestas_opciones').delete().eq('response_id', id);
+    await supabase.from('respuestas').delete().eq('id', id);
+    if (cliente) await loadData(cliente.id);
+  }
+
   function exportCsv() {
     const blob = new Blob([csv(responses)], { type: 'text/csv;charset=utf-8;' });
     const url  = URL.createObjectURL(blob);
@@ -466,7 +473,7 @@ export default function AdminCliente() {
             <div style={{ overflowX: 'auto' }}>
               <table>
                 <thead>
-                  <tr><th>Fecha</th><th>Alumno</th><th>Grupo</th><th>Misión</th><th>Opciones</th><th>Texto</th></tr>
+                  <tr><th>Fecha</th><th>Alumno</th><th>Grupo</th><th>Misión</th><th>Opciones</th><th>Texto</th><th></th></tr>
                 </thead>
                 <tbody>
                   {responses.map((r, i) => (
@@ -479,6 +486,14 @@ export default function AdminCliente() {
                       <td className="small">{r.mision}</td>
                       <td className="small muted">{r.opciones}</td>
                       <td className="small">{r.open_answer}</td>
+                      <td>
+                        <button
+                          className="btn secondary"
+                          style={{ padding: '5px 10px', fontSize: 10, borderColor: 'rgba(122,30,30,.4)', color: '#7A1E1E' }}
+                          onClick={() => deleteResponse(r.id)}>
+                          Borrar
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
