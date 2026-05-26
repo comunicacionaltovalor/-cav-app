@@ -20,6 +20,7 @@ function MissionContent() {
   const [mission,   setMission]   = useState<Mission | null>(null);
   const [options,   setOptions]   = useState<Option[]>([]);
   const [student,   setStudent]   = useState<any>(null);
+  const [clienteId, setClienteId] = useState<string | null>(null);
   const [selected,  setSelected]  = useState<string[]>([]);
   const [answer,    setAnswer]    = useState('');
   const [name,      setName]      = useState('');
@@ -27,6 +28,7 @@ function MissionContent() {
   const [duplicate, setDuplicate] = useState(false);
   const [notFound,  setNotFound]  = useState(false);
   const [sending,   setSending]   = useState(false);
+  const [rankInfo,  setRankInfo]  = useState<{ position: number; total: number } | null>(null);
 
   useEffect(() => { load(); }, [slug, clienteSlug, alumnoSlug]);
 
@@ -39,6 +41,7 @@ function MissionContent() {
       .maybeSingle();
     if (!c.data) { setNotFound(true); return; }
     const clienteId = c.data.id;
+    setClienteId(clienteId);
 
     // Buscar misión por slug
     let m = await supabase
@@ -90,6 +93,26 @@ function MissionContent() {
     }
   }
 
+  async function calcRanking(studentId: string, groupName: string, cId: string) {
+    const { data: groupStudents } = await supabase
+      .from('alumnos')
+      .select('id')
+      .eq('group_name', groupName)
+      .eq('cliente_id', cId);
+    if (!groupStudents || groupStudents.length < 2) return;
+    const ids = groupStudents.map(s => s.id);
+    const { data: resps } = await supabase
+      .from('respuestas')
+      .select('student_id')
+      .in('student_id', ids);
+    const counts: Record<string, number> = {};
+    ids.forEach(id => { counts[id] = 0; });
+    (resps || []).forEach(r => { if (r.student_id) counts[r.student_id]++; });
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const position = sorted.findIndex(([id]) => id === studentId) + 1;
+    setRankInfo({ position, total: sorted.length });
+  }
+
   function toggle(id: string) {
     setSelected(v => v.includes(id) ? v.filter(x => x !== id) : [...v, id]);
   }
@@ -114,6 +137,9 @@ function MissionContent() {
     }
     setSending(false);
     setDone(true);
+    if (student?.id && student?.group_name && clienteId) {
+      calcRanking(student.id, student.group_name, clienteId);
+    }
   }
 
   /* ── pantallas de estado ── */
@@ -127,6 +153,26 @@ function MissionContent() {
           <p style={{ lineHeight: 1.75, opacity: .8 }}>
             Tu observación ha sido registrada. Mañana recibirás una nueva misión.
           </p>
+
+          {rankInfo && (
+            <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid rgba(184,150,62,.3)' }}>
+              <p className="brand" style={{ marginBottom: 10 }}>Tu posición en el grupo</p>
+              {rankInfo.position === 1 ? (
+                <p style={{ fontSize: 18, lineHeight: 1.6, opacity: .9 }}>
+                  Lideras tu grupo. <span style={{ color: 'var(--oro)' }}>#1</span> de {rankInfo.total} participantes.
+                </p>
+              ) : rankInfo.position <= 3 ? (
+                <p style={{ fontSize: 18, lineHeight: 1.6, opacity: .9 }}>
+                  Estás entre los 3 más constantes.<br />
+                  Posición <span style={{ color: 'var(--oro)' }}>#{rankInfo.position}</span> de {rankInfo.total}.
+                </p>
+              ) : (
+                <p style={{ fontSize: 18, lineHeight: 1.6, opacity: .9 }}>
+                  Vas en el puesto <span style={{ color: 'var(--oro)' }}>#{rankInfo.position}</span> de {rankInfo.total} en tu grupo.
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </section>
     </main>
