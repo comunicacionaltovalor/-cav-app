@@ -18,7 +18,8 @@ export default function AdminCliente() {
   const [notFound,  setNotFound]  = useState(false);
   const [missions,  setMissions]  = useState<Mission[]>([]);
   const [students,  setStudents]  = useState<Student[]>([]);
-  const [responses, setResponses] = useState<any[]>([]);
+  const [responses,  setResponses]  = useState<any[]>([]);
+  const [respCounts, setRespCounts] = useState<Record<string, number>>({});
   const [saving,    setSaving]    = useState(false);
   const [editing,     setEditing]     = useState<Mission | null>(null);
   const [editOptions, setEditOptions] = useState('');
@@ -63,6 +64,15 @@ export default function AdminCliente() {
     ]);
     setMissions(m.data || []);
     setStudents(s.data || []);
+    // Contar misiones completadas por alumno
+    if (s.data && s.data.length > 0) {
+      const ids = s.data.map(st => st.id);
+      const { data: counts } = await supabase
+        .from('respuestas').select('student_id').in('student_id', ids);
+      const map: Record<string, number> = {};
+      (counts || []).forEach(c => { if (c.student_id) map[c.student_id] = (map[c.student_id] || 0) + 1; });
+      setRespCounts(map);
+    }
     setResponses(r.data || []);
   }
 
@@ -456,6 +466,34 @@ export default function AdminCliente() {
             )}
           </div>
         </div>
+
+        {/* ── RANKING ── */}
+        {students.length > 1 && (
+          <div className="card" style={{ marginTop: 0 }}>
+            <h2 className="headline" style={{ fontSize: 14, marginBottom: 18 }}>Ranking del grupo</h2>
+            <table>
+              <thead>
+                <tr><th>#</th><th>Alumno</th><th>Grupo</th><th>Misiones</th></tr>
+              </thead>
+              <tbody>
+                {[...students]
+                  .sort((a, b) => (respCounts[b.id] || 0) - (respCounts[a.id] || 0))
+                  .map((s, i) => (
+                    <tr key={s.id}>
+                      <td style={{ color: 'var(--oro)', fontFamily: 'Georgia', whiteSpace: 'nowrap' }}>
+                        {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
+                      </td>
+                      <td>{s.name}</td>
+                      <td className="muted small">{s.group_name}</td>
+                      <td style={{ fontFamily: 'Georgia', color: 'var(--azul)' }}>
+                        {respCounts[s.id] || 0}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         <div className="divider" />
 
