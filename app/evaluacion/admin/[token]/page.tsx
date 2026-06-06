@@ -89,6 +89,8 @@ export default function EvaluacionResultados() {
   const [edicion, setEdicion] = useState<Edicion | null>(null);
   const [resps, setResps] = useState<Resp[]>([]);
   const [loading, setLoading] = useState(true);
+  const [conclusiones, setConclusiones] = useState('');
+  const [generando, setGenerando] = useState(false);
 
   useEffect(() => {
     if (!checkAuth()) { window.location.href = '/evaluacion'; return; }
@@ -112,6 +114,43 @@ export default function EvaluacionResultados() {
       .order('created_at', { ascending: true });
     setResps(rs ?? []);
     setLoading(false);
+  }
+
+  async function generarConclusiones() {
+    if (!edicion || resps.length === 0) return;
+    setGenerando(true);
+    setConclusiones('');
+    try {
+      const res = await fetch('/api/evaluacion/conclusiones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cliente: edicion.cliente,
+          edicionNum: edicion.edicion_num,
+          n,
+          nps: npsScore ?? 0,
+          promotores: promoters,
+          pasivos: passives,
+          detractores: detractors,
+          q1Avg,
+          q3Avg,
+          q5Avgs,
+          q5Overall,
+          topicos: topicCounts,
+          q6: q6Counts,
+          q9: q9Counts,
+          comentarios4: textos4.map(t => t.text),
+          comentarios7: textos7.map(t => t.text),
+          comentarios10: textos10.map(t => t.text),
+        }),
+      });
+      const data = await res.json();
+      if (data.text) setConclusiones(data.text);
+      else setConclusiones('Error al generar el análisis. Intenta de nuevo.');
+    } catch {
+      setConclusiones('Error de conexión. Intenta de nuevo.');
+    }
+    setGenerando(false);
   }
 
   if (!ready || loading) return null;
@@ -514,6 +553,40 @@ export default function EvaluacionResultados() {
                   ))}
                 </div>
               )}
+
+              {/* ── ANÁLISIS IA ── */}
+              <div className="divider" />
+              <p className="section-label" style={{ marginBottom: 14 }}>Análisis ejecutivo</p>
+              <div className="card" style={{ borderColor: conclusiones ? 'var(--borde)' : 'rgba(27,42,74,.12)' }}>
+                {!conclusiones && !generando && (
+                  <div style={{ textAlign: 'center', padding: '12px 0' }}>
+                    <p style={{ fontSize: 14, opacity: .7, marginBottom: 18, lineHeight: 1.7 }}>
+                      Claude analiza los resultados y redacta un informe ejecutivo en prosa —
+                      síntesis, fortalezas, oportunidades y recomendación para RRHH.
+                    </p>
+                    <button className="no-print" onClick={generarConclusiones}>
+                      Generar análisis con IA
+                    </button>
+                  </div>
+                )}
+                {generando && (
+                  <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                    <p className="muted small">Analizando resultados…</p>
+                  </div>
+                )}
+                {conclusiones && (
+                  <>
+                    <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'Georgia, serif', fontSize: 15, lineHeight: 1.85, color: 'var(--carbon)' }}>
+                      {conclusiones}
+                    </div>
+                    <div className="nav no-print" style={{ marginTop: 20 }}>
+                      <button className="btn secondary" onClick={generarConclusiones}>
+                        Regenerar
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
 
               {/* ── PARTICIPANTES ── */}
               <div className="divider" />
