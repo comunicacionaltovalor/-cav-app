@@ -282,6 +282,46 @@ export default function EvaluacionResultados() {
             </div>
           ) : (
             <>
+              {/* ── PARTICIPANTES ── */}
+              <div className="divider" />
+              <p className="section-label" style={{ marginBottom: 14 }}>Lista de participantes ({n})</p>
+              <div className="card">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Nombre</th>
+                      <th>Fecha</th>
+                      <th style={{ textAlign: 'center' }}>Q1</th>
+                      <th style={{ textAlign: 'center' }}>Q3</th>
+                      <th style={{ textAlign: 'center' }}>NPS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {resps.map((r, i) => (
+                      <tr key={r.id}>
+                        <td className="muted" style={{ fontSize: 12 }}>{i + 1}</td>
+                        <td style={{ fontSize: 13 }}>{r.participant_name}</td>
+                        <td className="muted" style={{ fontSize: 12 }}>
+                          {new Date(r.created_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                        </td>
+                        <td style={{ textAlign: 'center' }}>{r.q1_aplicacion ?? '—'}</td>
+                        <td style={{ textAlign: 'center' }}>{r.q3_roleplay ?? '—'}</td>
+                        <td style={{ textAlign: 'center', fontWeight: 500 }}>
+                          <span style={{
+                            color: r.q8_nps !== null
+                              ? r.q8_nps >= 9 ? '#2E7D52' : r.q8_nps >= 7 ? 'var(--oro)' : '#7A1E1E'
+                              : 'inherit',
+                          }}>
+                            {r.q8_nps ?? '—'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
               {/* ── STATS PRINCIPALES ── */}
               <div className="divider" />
               <div className="stats" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: 8 }}>
@@ -626,45 +666,6 @@ export default function EvaluacionResultados() {
                 )}
               </div>
 
-              {/* ── PARTICIPANTES ── */}
-              <div className="divider" />
-              <p className="section-label" style={{ marginBottom: 14 }}>Lista de participantes ({n})</p>
-              <div className="card">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Nombre</th>
-                      <th>Fecha</th>
-                      <th style={{ textAlign: 'center' }}>Q1</th>
-                      <th style={{ textAlign: 'center' }}>Q3</th>
-                      <th style={{ textAlign: 'center' }}>NPS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {resps.map((r, i) => (
-                      <tr key={r.id}>
-                        <td className="muted" style={{ fontSize: 12 }}>{i + 1}</td>
-                        <td style={{ fontSize: 13 }}>{r.participant_name}</td>
-                        <td className="muted" style={{ fontSize: 12 }}>
-                          {new Date(r.created_at).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
-                        </td>
-                        <td style={{ textAlign: 'center' }}>{r.q1_aplicacion ?? '—'}</td>
-                        <td style={{ textAlign: 'center' }}>{r.q3_roleplay ?? '—'}</td>
-                        <td style={{ textAlign: 'center', fontWeight: 500 }}>
-                          <span style={{
-                            color: r.q8_nps !== null
-                              ? r.q8_nps >= 9 ? '#2E7D52' : r.q8_nps >= 7 ? 'var(--oro)' : '#7A1E1E'
-                              : 'inherit',
-                          }}>
-                            {r.q8_nps ?? '—'}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </>
           )}
         </section>
