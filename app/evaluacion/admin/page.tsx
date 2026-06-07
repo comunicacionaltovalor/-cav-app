@@ -11,6 +11,7 @@ type Edicion = {
   created_at: string;
   closed_at: string | null;
   expected_count: number;
+  rrhh_enabled: boolean;
   response_count?: number;
 };
 
@@ -97,6 +98,14 @@ export default function EvaluacionAdmin() {
     navigator.clipboard.writeText(`${siteUrl}/evaluacion/${token}`);
     setCopied(token);
     setTimeout(() => setCopied(null), 1800);
+  }
+
+  async function toggleRRHH(id: string, current: boolean) {
+    await supabase
+      .from('evaluaciones_ediciones')
+      .update({ rrhh_enabled: !current })
+      .eq('id', id);
+    await loadEdiciones();
   }
 
   function logout() {
@@ -194,6 +203,8 @@ export default function EvaluacionAdmin() {
                     borderColor: isClosed ? 'rgba(27,42,74,.12)' : 'var(--borde)',
                     opacity: isClosed ? .78 : 1,
                     marginBottom: 16,
+                    borderLeftWidth: e.rrhh_enabled ? 3 : 1,
+                    borderLeftColor: e.rrhh_enabled ? 'var(--oro)' : undefined,
                   }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 14 }}>
                     <div>
@@ -246,6 +257,15 @@ export default function EvaluacionAdmin() {
                     <a className="btn secondary" href={`/evaluacion/admin/${e.token}`}>
                       Ver resultados
                     </a>
+                    <button
+                      className="btn secondary"
+                      style={{
+                        borderColor: e.rrhh_enabled ? 'rgba(46,125,82,.5)' : 'rgba(27,42,74,.25)',
+                        color: e.rrhh_enabled ? '#2E7D52' : 'var(--azul)',
+                      }}
+                      onClick={() => toggleRRHH(e.id, e.rrhh_enabled)}>
+                      {e.rrhh_enabled ? '✓ RRHH habilitado' : 'Habilitar para RRHH'}
+                    </button>
                     {!isClosed ? (
                       <button
                         className="btn secondary"
