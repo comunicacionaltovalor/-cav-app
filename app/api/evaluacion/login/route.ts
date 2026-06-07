@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const password = body.password || '';
 
     // Instructor: sin usuario + contraseña correcta
-    const evalPass = process.env.EVAL_PASSWORD || 'CAV2025instructor';
+    const evalPass = process.env.EVAL_PASSWORD || 'Telefonica1414$';
     if (username === '' && password === evalPass) {
       return NextResponse.json({ ok: true, role: 'instructor' });
     }
