@@ -247,18 +247,6 @@ export default function EvaluacionResultados() {
             <Header />
             <div className="nav no-print" style={{ margin: 0 }}>
               <a className="btn secondary" href="/evaluacion/admin" style={{ fontSize: 10 }}>← Panel</a>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
-                <button
-                  onClick={() => window.print()}
-                  disabled={!canGenerate}>
-                  Imprimir / PDF
-                </button>
-                {!canGenerate && edicion.expected_count > 0 && (
-                  <p className="small" style={{ fontSize: 11, opacity: .6, textAlign: 'right', maxWidth: 220 }}>
-                    El análisis y la impresión se habilitan cuando el {THRESHOLD}% de los participantes haya respondido.
-                  </p>
-                )}
-              </div>
             </div>
           </div>
 
@@ -663,6 +651,21 @@ export default function EvaluacionResultados() {
                   <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'Georgia, serif', fontSize: 15, lineHeight: 1.85, color: 'var(--carbon)' }}>
                     {conclusiones}
                   </div>
+                )}
+              </div>
+
+              {/* ── BOTÓN IMPRIMIR ── */}
+              <div className="no-print" style={{ margin: '28px 0 8px', textAlign: 'center' }}>
+                <button
+                  onClick={() => window.print()}
+                  disabled={!canGenerate}
+                  style={{ padding: '16px 48px', fontSize: 13, letterSpacing: '.18em' }}>
+                  Imprimir / Descargar PDF
+                </button>
+                {!canGenerate && edicion.expected_count > 0 && (
+                  <p className="small" style={{ marginTop: 10, opacity: .55 }}>
+                    Se habilita cuando el {THRESHOLD}% de los participantes haya respondido.
+                  </p>
                 )}
               </div>
 
