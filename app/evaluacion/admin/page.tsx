@@ -37,7 +37,6 @@ export default function EvaluacionAdmin() {
   const [edicionNum, setEdicionNum] = useState(1);
   const [expected, setExpected] = useState(0);
   const [saving, setSaving] = useState(false);
-  const [copied, setCopied] = useState<string | null>(null);
 
   useEffect(() => {
     if (!checkAuth()) { window.location.href = '/evaluacion'; return; }
@@ -94,10 +93,15 @@ export default function EvaluacionAdmin() {
     await loadEdiciones();
   }
 
-  function copyLink(token: string) {
-    navigator.clipboard.writeText(`${siteUrl}/evaluacion/${token}`);
-    setCopied(token);
-    setTimeout(() => setCopied(null), 1800);
+  function shareWhatsApp(token: string, cliente: string) {
+    const link = `${siteUrl}/evaluacion/${token}`;
+    const msg =
+      `Hola, te comparto el enlace para evaluar el programa *Técnicas de Actuación para Comunicar con Claridad, Seguridad y Credibilidad* — ${cliente}.\n\n` +
+      `Tu evaluación es valiosa: nos permite medir el impacto real del programa en tu desarrollo y mejorar el contenido para quienes vengan después.\n\n` +
+      `Responde con honestidad. No hay respuestas correctas ni incorrectas, solo tu experiencia real.\n\n` +
+      `👉 ${link}\n\n` +
+      `Gracias por tu tiempo.`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
   async function deleteEdicion(id: string, cliente: string) {
@@ -257,8 +261,8 @@ export default function EvaluacionAdmin() {
                   </p>
 
                   <div className="nav" style={{ marginTop: 0 }}>
-                    <button onClick={() => copyLink(e.token)}>
-                      {copied === e.token ? '✓ Copiado' : 'Copiar enlace'}
+                    <button onClick={() => shareWhatsApp(e.token, e.cliente)}>
+                      Enviar por WhatsApp
                     </button>
                     <a className="btn secondary" href={`/evaluacion/admin/${e.token}`}>
                       Ver resultados
