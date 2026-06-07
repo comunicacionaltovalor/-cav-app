@@ -247,12 +247,18 @@ export default function EvaluacionResultados() {
             <Header />
             <div className="nav no-print" style={{ margin: 0 }}>
               <a className="btn secondary" href="/evaluacion/admin" style={{ fontSize: 10 }}>← Panel</a>
-              <button
-                onClick={() => window.print()}
-                disabled={!canGenerate}
-                title={!canGenerate ? `Disponible al ${THRESHOLD}% de respuestas` : ''}>
-                Imprimir / PDF
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+                <button
+                  onClick={() => window.print()}
+                  disabled={!canGenerate}>
+                  Imprimir / PDF
+                </button>
+                {!canGenerate && edicion.expected_count > 0 && (
+                  <p className="small" style={{ fontSize: 11, opacity: .6, textAlign: 'right', maxWidth: 220 }}>
+                    El análisis y la impresión se habilitan cuando el {THRESHOLD}% de los participantes haya respondido.
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 
