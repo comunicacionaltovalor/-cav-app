@@ -579,11 +579,6 @@ export default function EvaluacionResultados() {
                     <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'Georgia, serif', fontSize: 15, lineHeight: 1.85, color: 'var(--carbon)' }}>
                       {conclusiones}
                     </div>
-                    <div className="nav no-print" style={{ marginTop: 20 }}>
-                      <button className="btn secondary" onClick={generarConclusiones}>
-                        Regenerar
-                      </button>
-                    </div>
                   </>
                 )}
               </div>
