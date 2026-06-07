@@ -2,20 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const { username, password } = await req.json();
+    const body = await req.json();
+    const username = (body.username || '').trim().toLowerCase();
+    const password = body.password || '';
 
-    // Instructor: sin usuario o usuario vacío + contraseña correcta
-    if ((!username || username.trim() === '') && password === process.env.EVAL_PASSWORD) {
+    // Instructor: sin usuario + contraseña correcta
+    const evalPass = process.env.EVAL_PASSWORD || 'CAV2025instructor';
+    if (username === '' && password === evalPass) {
       return NextResponse.json({ ok: true, role: 'instructor' });
     }
 
-    // RRHH: usuario + contraseña correctos
-    const rrhhUser = process.env.RRHH_USER || 'rrhh';
+    // RRHH: usuario "rrhh" + contraseña correcta
     const rrhhPass = process.env.RRHH_PASSWORD || 'RRHH2025';
-    if (
-      username?.trim().toLowerCase() === rrhhUser.toLowerCase() &&
-      password === rrhhPass
-    ) {
+    if (username === 'rrhh' && password === rrhhPass) {
       return NextResponse.json({ ok: true, role: 'rrhh' });
     }
 
