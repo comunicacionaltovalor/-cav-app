@@ -91,9 +91,21 @@ export default function EvaluacionResultados() {
   const [loading, setLoading] = useState(true);
   const [conclusiones, setConclusiones] = useState('');
   const [generando, setGenerando] = useState(false);
+  const [role, setRole] = useState<'instructor' | 'rrhh'>('instructor');
+  const [rrhhYaGenero, setRrhhYaGenero] = useState(false);
 
   useEffect(() => {
     if (!checkAuth()) { window.location.href = '/evaluacion'; return; }
+    try {
+      const raw = localStorage.getItem('eval_auth');
+      if (raw) {
+        const { role: r } = JSON.parse(raw);
+        setRole(r === 'rrhh' ? 'rrhh' : 'instructor');
+        if (r === 'rrhh') {
+          setRrhhYaGenero(!!localStorage.getItem(`rrhh_gen_${token}`));
+        }
+      }
+    } catch { /* ignorar */ }
     setReady(true);
     load();
   }, []);
@@ -145,8 +157,15 @@ export default function EvaluacionResultados() {
         }),
       });
       const data = await res.json();
-      if (data.text) setConclusiones(data.text);
-      else setConclusiones('Error al generar el análisis. Intenta de nuevo.');
+      if (data.text) {
+        setConclusiones(data.text);
+        if (role === 'rrhh') {
+          localStorage.setItem(`rrhh_gen_${token}`, '1');
+          setRrhhYaGenero(true);
+        }
+      } else {
+        setConclusiones('Error al generar el análisis. Intenta de nuevo.');
+      }
     } catch {
       setConclusiones('Error de conexión. Intenta de nuevo.');
     }
@@ -633,13 +652,38 @@ export default function EvaluacionResultados() {
                         El análisis y la impresión se habilitan cuando el {THRESHOLD}% de los participantes haya respondido.
                       </p>
                     )}
-                    <button
-                      className="no-print"
-                      onClick={generarConclusiones}
-                      disabled={!canGenerate}
-                      title={!canGenerate ? `Disponible al ${THRESHOLD}% de respuestas` : ''}>
-                      Generar análisis con IA
-                    </button>
+                    {/* Aviso para RRHH */}
+                    {role === 'rrhh' && (
+                      <div style={{
+                        display: 'inline-flex', alignItems: 'flex-start', gap: 10,
+                        background: 'rgba(184,150,62,.1)',
+                        border: '1px solid rgba(184,150,62,.35)',
+                        padding: '12px 16px',
+                        marginBottom: 18,
+                        maxWidth: 420,
+                        textAlign: 'left',
+                      }}>
+                        <span style={{ fontSize: 16, lineHeight: 1, marginTop: 1 }}>💡</span>
+                        <p className="small" style={{ lineHeight: 1.7, opacity: .85 }}>
+                          Solo puedes generar este análisis <strong>una vez</strong>.
+                          Te recomendamos hacerlo cuando al menos el <strong>{THRESHOLD}%</strong> de los
+                          participantes haya respondido para obtener resultados representativos.
+                        </p>
+                      </div>
+                    )}
+                    {role === 'rrhh' && rrhhYaGenero ? (
+                      <p className="small muted" style={{ marginTop: 8 }}>
+                        Ya generaste el análisis para esta edición. Imprime o descarga el PDF.
+                      </p>
+                    ) : (
+                      <button
+                        className="no-print"
+                        onClick={generarConclusiones}
+                        disabled={!canGenerate}
+                        title={!canGenerate ? `Disponible al ${THRESHOLD}% de respuestas` : ''}>
+                        Generar análisis con IA
+                      </button>
+                    )}
                   </div>
                 )}
                 {generando && (
