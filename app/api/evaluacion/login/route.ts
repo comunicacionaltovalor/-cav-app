@@ -10,9 +10,11 @@ export async function POST(req: NextRequest) {
     }
 
     // RRHH: usuario + contraseña correctos
+    const rrhhUser = process.env.RRHH_USER || 'rrhh';
+    const rrhhPass = process.env.RRHH_PASSWORD || 'RRHH2025';
     if (
-      username?.trim().toLowerCase() === process.env.RRHH_USER?.toLowerCase() &&
-      password === process.env.RRHH_PASSWORD
+      username?.trim().toLowerCase() === rrhhUser.toLowerCase() &&
+      password === rrhhPass
     ) {
       return NextResponse.json({ ok: true, role: 'rrhh' });
     }
