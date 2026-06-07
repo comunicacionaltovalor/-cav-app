@@ -100,6 +100,12 @@ export default function EvaluacionAdmin() {
     setTimeout(() => setCopied(null), 1800);
   }
 
+  async function deleteEdicion(id: string, cliente: string) {
+    if (!confirm(`¿Eliminar la edición de "${cliente}"? Se borrarán todas las respuestas. Esta acción no se puede deshacer.`)) return;
+    await supabase.from('evaluaciones_ediciones').delete().eq('id', id);
+    await loadEdiciones();
+  }
+
   async function toggleRRHH(id: string, current: boolean) {
     await supabase
       .from('evaluaciones_ediciones')
@@ -280,6 +286,12 @@ export default function EvaluacionAdmin() {
                         Reabrir
                       </button>
                     )}
+                    <button
+                      className="btn secondary"
+                      style={{ borderColor: 'rgba(122,30,30,.3)', color: '#7A1E1E', opacity: .7 }}
+                      onClick={() => deleteEdicion(e.id, e.cliente)}>
+                      Eliminar
+                    </button>
                   </div>
                 </div>
               );
