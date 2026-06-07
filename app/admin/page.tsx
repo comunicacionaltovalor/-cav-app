@@ -49,28 +49,15 @@ export default function AdminHome() {
 
         <div className="grid">
           {clientes.map(c => (
-            <a key={c.id} href={`/admin/${c.slug}`} style={{ textDecoration: 'none' }}>
-              <div
-                className="card"
-                style={{
-                  margin: 0,
-                  cursor: 'pointer',
-                  transition: 'border-color .2s, box-shadow .2s',
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.borderColor = 'var(--oro)';
-                  (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 24px rgba(27,42,74,.16)';
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLElement).style.borderColor = '';
-                  (e.currentTarget as HTMLElement).style.boxShadow = '';
-                }}
-              >
-                <p className="brand" style={{ marginBottom: 12 }}>Programa activo</p>
-                <h2 className="headline" style={{ fontSize: 26, marginBottom: 10 }}>{c.name}</h2>
-                <p className="small muted">/{c.slug}</p>
+            <div key={c.id} className="card" style={{ margin: 0 }}>
+              <p className="brand" style={{ marginBottom: 12 }}>Programa activo</p>
+              <h2 className="headline" style={{ fontSize: 26, marginBottom: 10 }}>{c.name}</h2>
+              <p className="small muted" style={{ marginBottom: 20 }}>/{c.slug}</p>
+              <div className="nav" style={{ marginTop: 0 }}>
+                <a className="btn" href={`/admin/${c.slug}`}>Misiones</a>
+                <a className="btn secondary" href="/evaluacion/admin">Evaluación</a>
               </div>
-            </a>
+            </div>
           ))}
 
           {/* Tarjeta nuevo cliente */}
