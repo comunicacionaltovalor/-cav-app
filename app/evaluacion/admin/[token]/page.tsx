@@ -216,6 +216,15 @@ export default function EvaluacionResultados() {
   const textos7  = resps.filter(r => r.q7_diferente?.trim()).map(r => ({ name: r.participant_name, text: r.q7_diferente! }));
   const textos10 = resps.filter(r => r.q10_comentarios?.trim()).map(r => ({ name: r.participant_name, text: r.q10_comentarios! }));
 
+  const THRESHOLD = 80;
+  const pctResp = edicion.expected_count > 0
+    ? Math.round((n / edicion.expected_count) * 100)
+    : 100;
+  const canGenerate = pctResp >= THRESHOLD;
+  const pendientes = edicion.expected_count > 0
+    ? Math.max(0, Math.ceil(edicion.expected_count * THRESHOLD / 100) - n)
+    : 0;
+
   const printDate = new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
 
   return (
@@ -238,7 +247,12 @@ export default function EvaluacionResultados() {
             <Header />
             <div className="nav no-print" style={{ margin: 0 }}>
               <a className="btn secondary" href="/evaluacion/admin" style={{ fontSize: 10 }}>← Panel</a>
-              <button onClick={() => window.print()}>Imprimir / PDF</button>
+              <button
+                onClick={() => window.print()}
+                disabled={!canGenerate}
+                title={!canGenerate ? `Disponible al ${THRESHOLD}% de respuestas` : ''}>
+                Imprimir / PDF
+              </button>
             </div>
           </div>
 
@@ -555,71 +569,56 @@ export default function EvaluacionResultados() {
               )}
 
               {/* ── ANÁLISIS IA ── */}
-              {(() => {
-                const THRESHOLD = 80;
-                const pctResp = edicion.expected_count > 0
-                  ? Math.round((n / edicion.expected_count) * 100)
-                  : 100;
-                const canGenerate = pctResp >= THRESHOLD;
-                const pendientes = edicion.expected_count > 0
-                  ? Math.max(0, Math.ceil(edicion.expected_count * THRESHOLD / 100) - n)
-                  : 0;
-
-                return (
-                  <>
-                    <div className="divider" />
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
-                      <p className="section-label" style={{ margin: 0 }}>Análisis ejecutivo</p>
-                      {edicion.expected_count > 0 && (
-                        <span style={{
-                          display: 'inline-flex', alignItems: 'center', gap: 6,
-                          padding: '4px 12px',
-                          fontSize: 11, letterSpacing: '.1em',
-                          border: `1px solid ${canGenerate ? 'rgba(46,125,82,.4)' : 'rgba(184,150,62,.4)'}`,
-                          color: canGenerate ? '#2E7D52' : 'var(--oro)',
-                          background: canGenerate ? 'rgba(46,125,82,.06)' : 'rgba(184,150,62,.08)',
-                        }}>
-                          {canGenerate
-                            ? `✓ ${pctResp}% respondido — listo para generar`
-                            : `${pctResp}% respondido — se habilita al ${THRESHOLD}%${pendientes > 0 ? ` (faltan ${pendientes})` : ''}`}
-                        </span>
-                      )}
-                    </div>
-                    <div className="card" style={{ borderColor: conclusiones ? 'var(--borde)' : 'rgba(27,42,74,.12)' }}>
-                      {!conclusiones && !generando && (
-                        <div style={{ textAlign: 'center', padding: '12px 0' }}>
-                          <p style={{ fontSize: 14, opacity: .7, marginBottom: 18, lineHeight: 1.7 }}>
-                            Se analizan los resultados con IA y se redacta un informe ejecutivo en prosa —
-                            síntesis, fortalezas, oportunidades y recomendación para RRHH.
-                          </p>
-                          {!canGenerate && edicion.expected_count > 0 && (
-                            <p className="small" style={{ opacity: .55, marginBottom: 16 }}>
-                              El botón se habilitará cuando el {THRESHOLD}% de los participantes haya respondido.
-                            </p>
-                          )}
-                          <button
-                            className="no-print"
-                            onClick={generarConclusiones}
-                            disabled={!canGenerate}
-                            title={!canGenerate ? `Disponible al ${THRESHOLD}% de respuestas` : ''}>
-                            Generar análisis con IA
-                          </button>
-                        </div>
-                      )}
-                      {generando && (
-                        <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                          <p className="muted small">Analizando resultados…</p>
-                        </div>
-                      )}
-                      {conclusiones && (
-                        <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'Georgia, serif', fontSize: 15, lineHeight: 1.85, color: 'var(--carbon)' }}>
-                          {conclusiones}
-                        </div>
-                      )}
-                    </div>
-                  </>
-                );
-              })()}
+              <div className="divider" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
+                <p className="section-label" style={{ margin: 0 }}>Análisis ejecutivo</p>
+                {edicion.expected_count > 0 && (
+                  <span style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    padding: '4px 12px',
+                    fontSize: 11, letterSpacing: '.1em',
+                    border: `1px solid ${canGenerate ? 'rgba(46,125,82,.4)' : 'rgba(184,150,62,.4)'}`,
+                    color: canGenerate ? '#2E7D52' : 'var(--oro)',
+                    background: canGenerate ? 'rgba(46,125,82,.06)' : 'rgba(184,150,62,.08)',
+                  }}>
+                    {canGenerate
+                      ? `✓ ${pctResp}% respondido — listo`
+                      : `${pctResp}% respondido — se habilita al ${THRESHOLD}%${pendientes > 0 ? ` (faltan ${pendientes})` : ''}`}
+                  </span>
+                )}
+              </div>
+              <div className="card" style={{ borderColor: conclusiones ? 'var(--borde)' : 'rgba(27,42,74,.12)' }}>
+                {!conclusiones && !generando && (
+                  <div style={{ textAlign: 'center', padding: '12px 0' }}>
+                    <p style={{ fontSize: 14, opacity: .7, marginBottom: 18, lineHeight: 1.7 }}>
+                      Se analizan los resultados con IA y se redacta un informe ejecutivo en prosa —
+                      síntesis, fortalezas, oportunidades y recomendación para RRHH.
+                    </p>
+                    {!canGenerate && edicion.expected_count > 0 && (
+                      <p className="small" style={{ opacity: .55, marginBottom: 16 }}>
+                        El análisis y la impresión se habilitan cuando el {THRESHOLD}% de los participantes haya respondido.
+                      </p>
+                    )}
+                    <button
+                      className="no-print"
+                      onClick={generarConclusiones}
+                      disabled={!canGenerate}
+                      title={!canGenerate ? `Disponible al ${THRESHOLD}% de respuestas` : ''}>
+                      Generar análisis con IA
+                    </button>
+                  </div>
+                )}
+                {generando && (
+                  <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                    <p className="muted small">Analizando resultados…</p>
+                  </div>
+                )}
+                {conclusiones && (
+                  <div style={{ whiteSpace: 'pre-wrap', fontFamily: 'Georgia, serif', fontSize: 15, lineHeight: 1.85, color: 'var(--carbon)' }}>
+                    {conclusiones}
+                  </div>
+                )}
+              </div>
 
               {/* ── PARTICIPANTES ── */}
               <div className="divider" />
