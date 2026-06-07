@@ -561,7 +561,7 @@ export default function EvaluacionResultados() {
                 {!conclusiones && !generando && (
                   <div style={{ textAlign: 'center', padding: '12px 0' }}>
                     <p style={{ fontSize: 14, opacity: .7, marginBottom: 18, lineHeight: 1.7 }}>
-                      Claude analiza los resultados y redacta un informe ejecutivo en prosa —
+                      Se analiza los resultados con IA y se redacta un informe ejecutivo en prosa —
                       síntesis, fortalezas, oportunidades y recomendación para RRHH.
                     </p>
                     <button className="no-print" onClick={generarConclusiones}>
