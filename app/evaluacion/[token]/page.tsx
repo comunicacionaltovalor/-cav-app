@@ -294,10 +294,10 @@ export default function EvaluacionForm() {
     <main className="page dark" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
       <section className="shell" style={{ maxWidth: 500, margin: '0 auto' }}>
         <Header />
-        <div className="card">
+        <div className="card" style={{ color: 'var(--carbon)' }}>
           <p className="brand" style={{ marginBottom: 14 }}>Evaluación completada</p>
-          <h1 className="headline" style={{ fontSize: 22, marginBottom: 14 }}>Gracias por tu respuesta</h1>
-          <p style={{ lineHeight: 1.75, fontSize: 15, fontFamily: 'Georgia, serif', opacity: .85 }}>
+          <h1 className="headline" style={{ fontSize: 22, marginBottom: 14, color: 'var(--azul)' }}>Gracias por tu respuesta</h1>
+          <p style={{ lineHeight: 1.75, fontSize: 15, fontFamily: 'Georgia, serif', opacity: .85, color: 'var(--carbon)' }}>
             Tu evaluación para <strong>{edicion.cliente}</strong> ha sido registrada.
             Tus comentarios son valiosos para seguir mejorando el programa.
           </p>
