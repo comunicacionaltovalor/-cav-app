@@ -9,10 +9,10 @@ type Cliente = { id: string; name: string; slug: string; created_at: string };
 
 function checkAdminAuth(): boolean {
   try {
-    const raw = localStorage.getItem('eval_auth');
+    const raw = localStorage.getItem('admin_auth');
     if (!raw) return false;
-    const { ts, role } = JSON.parse(raw);
-    return role === 'instructor' && Date.now() - ts < 8 * 60 * 60 * 1000;
+    const { ts } = JSON.parse(raw);
+    return Date.now() - ts < 8 * 60 * 60 * 1000;
   } catch { return false; }
 }
 
@@ -40,7 +40,9 @@ export default function AdminHome() {
       body: JSON.stringify({ username: '', password }),
     });
     if (res.ok) {
-      localStorage.setItem('eval_auth', JSON.stringify({ ts: Date.now(), role: 'instructor' }));
+      const ts = Date.now();
+      localStorage.setItem('admin_auth', JSON.stringify({ ts }));
+      localStorage.setItem('eval_auth', JSON.stringify({ ts, role: 'instructor' }));
       setAuthed(true);
       load();
     } else {
@@ -73,6 +75,7 @@ export default function AdminHome() {
   }
 
   function logout() {
+    localStorage.removeItem('admin_auth');
     localStorage.removeItem('eval_auth');
     setAuthed(false);
     setPassword('');
