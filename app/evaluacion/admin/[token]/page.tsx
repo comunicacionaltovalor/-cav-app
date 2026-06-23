@@ -685,8 +685,8 @@ export default function EvaluacionResultados() {
                       <button
                         className="no-print"
                         onClick={generarConclusiones}
-                        disabled={!canGenerate}
-                        title={!canGenerate ? `Disponible al ${THRESHOLD}% de respuestas` : ''}>
+                        disabled={role === 'rrhh' ? !canGenerate : false}
+                        title={role === 'rrhh' && !canGenerate ? `Disponible al ${THRESHOLD}% de respuestas` : ''}>
                         Generar análisis con IA
                       </button>
                     )}
