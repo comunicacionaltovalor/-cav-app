@@ -12,6 +12,7 @@ type Edicion = {
   created_at: string;
   closed_at: string | null;
   expected_count: number;
+  conclusiones: string | null;
 };
 
 type Resp = {
@@ -118,6 +119,7 @@ export default function EvaluacionResultados() {
       .single();
     if (!ed) { setLoading(false); return; }
     setEdicion(ed);
+    if (ed.conclusiones) setConclusiones(ed.conclusiones);
 
     const { data: rs } = await supabase
       .from('evaluaciones_respuestas')
@@ -159,6 +161,10 @@ export default function EvaluacionResultados() {
       const data = await res.json();
       if (data.text) {
         setConclusiones(data.text);
+        await supabase
+          .from('evaluaciones_ediciones')
+          .update({ conclusiones: data.text })
+          .eq('token', token);
         if (role === 'rrhh') {
           localStorage.setItem(`rrhh_gen_${token}`, '1');
           setRrhhYaGenero(true);
