@@ -708,11 +708,11 @@ export default function EvaluacionResultados() {
               <div className="no-print" style={{ margin: '28px 0 8px', textAlign: 'center' }}>
                 <button
                   onClick={() => window.print()}
-                  disabled={!canGenerate}
+                  disabled={!canGenerate && !conclusiones}
                   style={{ padding: '16px 48px', fontSize: 13, letterSpacing: '.18em' }}>
                   Imprimir / Descargar PDF
                 </button>
-                {!canGenerate && edicion.expected_count > 0 && (
+                {!canGenerate && !conclusiones && edicion.expected_count > 0 && (
                   <p className="small" style={{ marginTop: 10, opacity: .55 }}>
                     Se habilita cuando el {THRESHOLD}% de los participantes haya respondido.
                   </p>
